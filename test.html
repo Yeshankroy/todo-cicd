@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Portal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .news-item {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease-in-out;
+        }
+        .news-item:hover {
+            transform: scale(1.02);
+        }
+        .news-item img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        .news-item h2 {
+            color: #333;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        .news-item p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        .news-item a {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 15px;
+            background: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        .news-item a:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Latest News</h1> 
+    <div class="container">
+        <div id="news-container"></div>
+    </div>
+
+    <script>
+        const newsData = [
+            {
+                "title": "China’s $10,000 EV is Coming for Europe’s Carmakers",
+                "description": "BYD’s Seagull hatchback is set to start Europe sales next year, beating the competition on price.",
+                "url": "https://financialpost.com/pmn/business-pmn/chinas-10000-ev-is-coming-for-europes-carmakers",
+                "urlToImage": "https://smartcdn.gprod.postmedia.digital/financialpost/wp-content/uploads/2024/05/776145093.jpg"
+            },
+            {
+                "title": "Hybrid Mania At An All-Time High",
+                "description": "Hybrid sales in the US were up more than 50% in 2023 as sales of battery electric cars took a downward turn.",
+                "url": "https://cleantechnica.com/2024/05/22/hybrid-mania-at-an-all-time-high/",
+                "urlToImage": "https://cleantechnica.com/wp-content/uploads/2024/02/2022.12-toyota-prius-2023-first-drive-del-mar-california-KYLE-CleanTechnica.jpg"
+            },
+            {
+  "source": {
+    "id": null,
+    "name": "Biztoc.com"
+    },
+    "author": "tipranks.com",
+    "title": "Will Tesla Stock (NASDAQ:TSLA) Tread Water Until the Robotaxi Unveiling?",
+    "description": "https://www.tipranks.com/news/article/will-tesla-stock-nasdaqtsla-tread-water-until-the-robotaxi-unveiling?utm_source=biztoc.com&utm_medium=referral",
+    "url": "https://biztoc.com/x/c274be9688b4c3aa",
+    "urlToImage": "https://c.biztoc.com/p/c274be9688b4c3aa/s.webp",
+    "publishedAt": "2024-05-22T03:00:22Z",
+    "content": "https://www.tipranks.com/news/article/will-tesla-stock-nasdaqtsla-tread-water-until-the-robotaxi-unveiling?utm_source=biztoc.com&amp;utm_medium=referral\r\nThis story appeared on tipranks.com, ."
+    },
+    {
+    "source": {
+    "id": null,
+    "name": "Biztoc.com"
+    },
+    "author": "aol.com",
+    "title": "A fire broke out at Tesla's Fremont factory once again, this time due to an oven",
+    "description": "None The Fremont Fire Department reported no injuries and is investigating the cause. • None The Tesla Fremont factory has seen several fires over the years. On Monday evening, a 2-alarm commercial fire occurred at Tesla's Fremont factory, which has experienc…",
+    "url": "https://biztoc.com/x/de89df12a0ccfb79",
+    "urlToImage": "https://c.biztoc.com/p/de89df12a0ccfb79/s.webp",
+    "publishedAt": "2024-05-22T01:56:05Z",
+    "content": "None The Fremont Fire Department reported no injuries and is investigating the cause.None The Tesla Fremont factory has seen several fires over the years.On Monday evening, a 2-alarm commercial fire … [+233 chars]"
+    },
+    {
+    "source": {
+    "id": null,
+    "name": "iPhone in Canada"
+    },
+    "author": "John Quintet",
+    "title": "SpaceX Achieves First Video Call via Starlink Direct to Cell Satellites",
+    "description": "SpaceX on Tuesday announced it had successfully tested its first video call using Starlink Direct to cell satellites, which is an ambitious plan to bring cell coverage for the entire planet, targeting faraway places that typically have no signal. “First video…",
+    "url": "https://www.iphoneincanada.ca/2024/05/21/spacex-first-video-call-starlink-direct-cell/",
+    "urlToImage": "https://cdn.iphoneincanada.ca/wp-content/uploads/2017/09/iic-logo-1.svg",
+    "publishedAt": "2024-05-22T01:33:21Z",
+    "content": "SpaceX on Tuesday announced it had successfully tested its first video call using Starlink Direct to cell satellites, which is an ambitious plan to bring cell coverage for the entire planet, targetin… [+1161 chars]"
+    },
+    {
+    "source": {
+    "id": null,
+    "name": "KLAS - 8 News Now"
+    },
+    "author": "Linsey Lewis",
+    "title": "Teen arrested after allegedly doing donuts in grass area of Henderson park",
+    "description": "A teenager faces several charges after he was accused of doing donuts in the grass area of a Henderson park, according to Henderson police.",
+    "url": "https://www.8newsnow.com/news/local-news/teen-arrested-after-allegedly-doing-donuts-in-grass-area-of-henderson-park/",
+    "urlToImage": "https://media.zenfs.com/en/klas_articles_549/30ebbea96a4d6ebc766a0730e4e56d09",
+    "publishedAt": "2024-05-22T01:06:20Z",
+    "content": "LAS VEGAS (KLAS) A teenager faces several charges after he was accused of doing donuts in the grass area of a Henderson park, according to Henderson police.\r\nOn Monday, Henderson police responded to … [+898 chars]"
+    },
+    {
+    "source": {
+    "id": null,
+    "name": "Biztoc.com"
+    },
+    "author": "benzinga.com",
+    "title": "Elon Musk Has 'Fond Memories' From Red Lobster, Expresses Sorrow At Seafood Chain's Bankruptcy News",
+    "description": "Serial entrepreneur and Tesla CEO Elon Musk expressed his sorrow over the bankruptcy filing of the popular seafood chain, Red Lobster. What Happened: Red Lobster has filed for Chapter 11 bankruptcy. This news follows the company’s announcement last week about…",
+    "url": "https://biztoc.com/x/806a45cc00fa816e",
+    "urlToImage": "https://c.biztoc.com/p/806a45cc00fa816e/s.webp",
+    "publishedAt": "2024-05-22T01:00:06Z",
+    "content": "Serial entrepreneur and Tesla CEO Elon Musk expressed his sorrow over the bankruptcy filing of the popular seafood chain, Red Lobster.What Happened: Red Lobster has filed for Chapter 11 bankruptcy. T… [+280 chars]"
+    },
+    {
+    "source": {
+    "id": null,
+    "name": "Futurism"
+    },
+    "author": "Jon Christian",
+    "title": "This Pedantic Elon Musk Tweet Perfectly Illustrates Why Nobody Can Stand Him Anymore",
+    "description": "The cool kids nowadays insist they never felt that way, but peering back into the mists of the 2000s, there was definitely an era when Elon Musk seemed like a pretty inspiring guy. Sure, he made his initial stack of money doing conventional software startup s…",
+    "url": "https://futurism.com/elon-musk-fallout-tweet",
+    "urlToImage": "https://wp-assets.futurism.com/2024/05/elon-musk-fallout-tweet.jpg",
+    "publishedAt": "2024-05-22T00:57:09Z",
+    "content": "The cool kids nowadays insist they never felt that way, but peering back into the mists of the 2000s, there was definitely an era when Elon Musk seemed like a pretty inspiring guy.\r\nSure, he made his… [+3100 chars]"
+    },
+    {
+    "source": {
+    "id": null,
+    "name": "Biztoc.com"
+    },
+    "author": "tipranks.com",
+    "title": "‘Don’t Ignore This Big Potential,’ Says Investor About Tesla Stock",
+    "description": "Wall Street has long argued whether Tesla (NASDAQ:TSLA) should be looked at as purely an automaker or be considered a tech play. While the debate i... #tesla",
+    "url": "https://biztoc.com/x/88e46d7313848e7d",
+    "urlToImage": "https://c.biztoc.com/p/88e46d7313848e7d/s.webp",
+    "publishedAt": "2024-05-22T00:54:15Z",
+    "content": "Wall Street has long argued whether Tesla (NASDAQ:TSLA) should be looked at as purely an automaker or be considered a tech play. While the debate i...\r\n#tesla\r\nThis story appeared on tipranks.com, ."
+    },
+    {
+    "source": {
+    "id": null,
+    "name": "Freerepublic.com"
+    },
+    "author": "Breitbart",
+    "title": "Michigan Town Loses Bid to Block Chinese-Owned Electric Vehicle Battery Factory",
+    "description": "The Michigan community of Green Charter Township on Friday lost a court battle to block Chinese-linked electric vehicle (EV) battery manufacturer Gotion Inc. from building a factory near the town. Michigan is generally friendly to Chinese investments and the …",
+    "url": "https://freerepublic.com/focus/f-chat/4239260/posts",
+    "urlToImage": null,
+    "publishedAt": "2024-05-22T00:41:44Z",
+    "content": "Skip to comments.\r\nMichigan Town Loses Bid to Block Chinese-Owned Electric Vehicle Battery FactoryBreitbart ^\r\n | 21May\r\n | Hayward \r\nPosted on 05/21/2024 5:41:44 PM PDT by qaz123\r\nThe Michigan commu… [+3110 chars]"
+    },
+    {
+    "source": {
+    "id": null,
+    "name": "Biztoc.com"
+    },
+    "author": "aol.com",
+    "title": "Investors clash over Elon Musk’s $46 billion pay package: ‘The board has yet to ensure that Tesla has a full-time CEO’",
+    "description": "Tesla investors are lobbying to shoot down the largest moonshot compensation plan in history. A group including the New York City pension funds filed a notice on Monday urging others to vote against Tesla CEO Elon Musk’s $46 billion stock-option package at th…",
+    "url": "https://biztoc.com/x/7be83349a72a59dd",
+    "urlToImage": "https://c.biztoc.com/p/7be83349a72a59dd/s.webp",
+    "publishedAt": "2024-05-22T00:32:05Z",
+    "content": "Tesla investors are lobbying to shoot down the largest moonshot compensation plan in history.A group including the New York City pension funds filed a notice on Monday urging others to vote against T… [+307 chars]"
+    },
+    {
+    "source": {
+    "id": null,
+    "name": "Biztoc.com"
+    },
+    "author": "forbes.com.au",
+    "title": "Elon Musk topples Bezos as world’s 2nd richest person after $6 billion Tesla surge",
+    "description": "Billionaire Tesla, SpaceX and X head Elon Musk saw his net worth spike to over $200 billion on Tuesday, taking back the title of world’s second-richest person from Amazon founder Jeff Bezos—though he still trails behind LVMH magnate Bernard Arnault, the world…",
+    "url": "https://biztoc.com/x/63e487eb17059753",
+    "urlToImage": "https://c.biztoc.com/p/63e487eb17059753/s.webp",
+    "publishedAt": "2024-05-22T00:28:12Z",
+    "content": "Billionaire Tesla, SpaceX and X head Elon Musk saw his net worth spike to over $200 billion on Tuesday, taking back the title of worlds second-richest person from Amazon founder Jeff Bezosthough he s… [+293 chars]"
+    },
+    {
+    "source": {
+    "id": null,
+    "name": "Biztoc.com"
+    },
+    "author": "businessinsider.com",
+    "title": "A fire broke out at Tesla's Fremont factory once again, this time due to an oven",
+    "description": "A fire broke out at Tesla's Fremont Factory Monday night. Steve Granitz/FilmMagic // Stephen Lam /Reuters Tesla's Fremont, California, plant suffered a 2-alarm commercial fire Monday evening. The Fremont Fire Department reported no injuries and is investigati…",
+    "url": "https://biztoc.com/x/bc9af8f4209ed07d",
+    "urlToImage": "https://c.biztoc.com/p/bc9af8f4209ed07d/s.webp",
+    "publishedAt": "2024-05-22T00:28:05Z",
+    "content": "A fire broke out at Tesla's Fremont Factory Monday night.Steve Granitz/FilmMagic // Stephen Lam /ReutersTesla's Fremont, California, plant suffered a 2-alarm commercial fire Monday evening.The Fremon… [+302 chars]"
+    }
+        ];
+
+        const newsContainer = document.getElementById("news-container");
+        newsData.forEach(news => {
+            const newsItem = document.createElement("div");
+            newsItem.classList.add("news-item");
+            newsItem.innerHTML = `
+                <h2>${news.title}</h2>
+                <img src="${news.urlToImage ? news.urlToImage : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmJRForJSTU4KQ84l-gWr0WdLk1FGz9M3JEA&s'}" 
+                     alt="News Image" 
+                     onerror="this.onerror=null;this.src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmJRForJSTU4KQ84l-gWr0WdLk1FGz9M3JEA&s';">
+                <p>${news.description}</p>
+                <a href="${news.url}" target="_blank">Read More</a>
+            `;
+            newsContainer.appendChild(newsItem);
+        });
+    </script>
+
+</body>
+</html>
