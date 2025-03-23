@@ -8,30 +8,26 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Deploy to EC2
-      env:
-        PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-        HOST: 54.211.241.172  # Replace with your EC2 public IP
-        USER: ubuntu
+      - name: Debugging: Print if PRIVATE_KEY is empty
+        run: |
+          if [[ -z "${{ secrets.EC2_SSH_PRIVATE_KEY }}" ]]; then
+            echo "ERROR: PRIVATE_KEY is empty!"
+            exit 1
+          else
+            echo "✅ PRIVATE_KEY is set!"
+          fi
 
-      run: |
-        # Debugging: Print if PRIVATE_KEY is empty
-        if [[ -z "$PRIVATE_KEY" ]]; then
-          echo "ERROR: PRIVATE_KEY is empty!"
-          exit 1
-        fi
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh -o StrictHostKeyChecking=no ubuntu@your-ec2-ip "echo Connected successfully"
 
-        # Save the private key
-        echo "$PRIVATE_KEY" > private_key.pem
-        chmod 600 private_key.pem
-
-        # Debugging: Check if the key works
-        ssh -v -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST "echo Connected to EC2"
 
         # Deploy changes
         ssh -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST << 'EOF'
