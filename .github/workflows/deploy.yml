@@ -1,0 +1,31 @@
+name: Deploy to AWS Apache Server
+
+on:
+  push:
+    branches:
+      - main  # Runs this workflow whenever changes are pushed to the 'main' branch.
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # Runs the job on the latest Ubuntu virtual machine.
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3  # Fetches the latest code from GitHub.
+
+    - name: Deploy to EC2
+      env:
+        PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY }}  # Uses the SSH key stored in GitHub Secrets.
+        HOST: your-ec2-public-ip  # Replace with your EC2 instance's public IP.
+        USER: ubuntu  # Default user for Ubuntu.
+
+      run: |
+        echo "$PRIVATE_KEY" > private_key.pem  # Creates a private key file.
+        chmod 600 private_key.pem  # Sets proper permissions for the SSH key.
+        
+        ssh -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST << 'EOF'
+          cd /var/www/html/  # Navigate to Apache web directory.
+          sudo git pull origin main  # Pull the latest changes from GitHub.
+          sudo chown -R www-data:www-data /var/www/html/  # Set correct permissions.
+          sudo systemctl restart apache2  # Restart Apache server to apply changes.
+        EOF
