@@ -15,8 +15,9 @@ jobs:
 
     - name: Deploy to EC2
       env:
-        PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY }}  # Uses the SSH key stored in GitHub Secrets.
-        HOST: your-ec2-public-ip  # Replace with your EC2 instance's public IP.
+        PRIVATE_KEY: ${{ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCmv3KN6fUm9WVjyRbixAKjcv8hnAT/0Lmmc496lxDv3GQSmBpaYQrSxapz4UEOetMJxz4aFl5WmSXhWbHx00Gd+YqPNoqTomHB6BrIq0xJCW+RhlmYwZoxrZQwWdjwUgXT6YvauJeGI9UmxsBZq/98+z4GAo7Z4WfyB5IjIM6Gz8rcDW+GhwW137C12HuauHUR4B96UYzT+XNxxOsZraGdLFpfEAMxyEjrhW5OM5epIjkaVpWEbFbPOGw3m4fjHkj+n+lckI/ctcaMMY5hXZZw2eahh0Inq5PylVKy3q/KMfkdtiuH+RYYTo85cVrVifZqyhBJEjWBq4FMYsU4TwKBNANy/pk/ufppYStUFB4Dq1QdH7dZC7coWvDUjOgm+iivMpicyX6BhEqna9sTVle7V55vgRSA5TF0EA8dzYaTtSFljOO+98Xrmly15/8EAK1eT0JT/7seuewwEUDvHEMb/bKSRQk+bUxdQM2lTGyY90d3TVsn5jWgXjAsnzyBtxlkBI/CEtxK4RrMqUWUbrwaSthpgJaoObE7q2QjO41AWaFB+HrPQxfKtsDab/wNTO2/LmCZHlF6hRFFRO2hJQT0OYXx3ejoHflrRkZVDWug5OzvlkjD6z/D+gkc16rlfQ2qHSQQDiV8jWr76fXRC27kBS6NnXl1UVanMi60Qwn+ZQ== ubuntu@ip-172-31-82-130
+ }}  # Uses the SSH key stored in GitHub Secrets.
+        HOST: ec2-54-211-241-172  # Replace with your EC2 instance's public IP.
         USER: ubuntu  # Default user for Ubuntu.
 
       run: |
