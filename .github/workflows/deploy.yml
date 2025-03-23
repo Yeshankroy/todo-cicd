@@ -3,38 +3,40 @@ name: Deploy to AWS Apache Server
 on:
   push:
     branches:
-      - main  # Runs this workflow whenever changes are pushed to 'main'.
+      - main
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest  # Runs the job on the latest Ubuntu virtual machine.
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v3  # Fetches the latest code from GitHub.
+      uses: actions/checkout@v3
 
     - name: Deploy to EC2
       env:
-        PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}  # Use GitHub Secrets for security
+        PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
         HOST: 54.211.241.172  # Replace with your EC2 public IP
-        USER: ubuntu  # Default user for Ubuntu on AWS EC2.
+        USER: ubuntu
 
       run: |
-        # Store the SSH private key securely
-        echo "$PRIVATE_KEY" > private_key.pem  
-        chmod 600 private_key.pem  
+        # Debugging: Print if PRIVATE_KEY is empty
+        if [[ -z "$PRIVATE_KEY" ]]; then
+          echo "ERROR: PRIVATE_KEY is empty!"
+          exit 1
+        fi
 
-        # SSH into EC2 and deploy
+        # Save the private key
+        echo "$PRIVATE_KEY" > private_key.pem
+        chmod 600 private_key.pem
+
+        # Debugging: Check if the key works
+        ssh -v -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST "echo Connected to EC2"
+
+        # Deploy changes
         ssh -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST << 'EOF'
-          cd /var/www/html/  # Navigate to Apache web directory
-
-          # Ensure the Git repository is set up properly
-          if [ ! -d ".git" ]; then
-            sudo rm -rf /var/www/html/*
-            sudo git clone https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY.git /var/www/html/
-          else
-            sudo git reset --hard  # Reset any local changes
-            sudo git pull origin main  # Pull the latest changes from GitHub
-          fi
-
-          sudo
+          cd /var/www/html/
+          sudo git pull origin main
+          sudo chown -R www-data:www-data /var/www/html/
+          sudo systemctl restart apache2
+        EOF
