@@ -18,6 +18,7 @@ jobs:
         PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
         HOST: ${{ secrets.EC2_HOST }}  # Store EC2 public IP as a GitHub Secret
         USER: ubuntu
+        REPO_URL: "https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git"  # Replace with your repo
 
       run: |
         # Debugging: Print if PRIVATE_KEY is empty
@@ -38,15 +39,22 @@ jobs:
         # Deploy changes
         ssh -o StrictHostKeyChecking=no $USER@$HOST << 'EOF'
           set -e  # Stop script if any command fails
-          cd /var/www/html/
+          cd /var/www/html/ || exit 1
 
           # Ensure Git is installed
           which git || sudo apt-get install -y git
 
-          # Set Git configuration to automatically resolve conflicts
-          git config pull.rebase false
-          git fetch --all
-          git reset --hard origin/main  # Force reset to match GitHub version
+          # Check if this is a Git repository
+          if [ ! -d ".git" ]; then
+            echo "Git repository not found! Cloning..."
+            sudo rm -rf /var/www/html/
+            sudo git clone https://x-access-token:${{ secrets.GITHUB_DEPLOY_KEY }}@github.com/YOUR_USERNAME/YOUR_REPOSITORY.git /var/www/html/
+            cd /var/www/html/
+          else
+            echo "Git repository exists. Pulling latest changes..."
+            git fetch --all
+            git reset --hard origin/main
+          fi
 
           # Set correct permissions and restart Apache
           sudo chown -R www-data:www-data /var/www/html/
