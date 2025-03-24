@@ -8,42 +8,45 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout Code
+      uses: actions/checkout@v3
 
-      - name: Debugging: Print if PRIVATE_KEY is empty
-        run: |
-          if [[ -z "${{ secrets.EC2_SSH_PRIVATE_KEY }}" ]]; then
-            echo "ERROR: PRIVATE_KEY is empty!"
-            exit 1
-          else
-            echo "✅ PRIVATE_KEY is set!"
-          fi
+    - name: Deploy to EC2
+      env:
+        PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+        HOST: ${{ secrets.EC2_HOST }}  # Store EC2 public IP as a GitHub Secret
+        USER: ubuntu
 
-      - name: Set up SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh -o StrictHostKeyChecking=no ubuntu@your-ec2-ip "echo Connected successfully"
+      run: |
+        # Debugging: Print if PRIVATE_KEY is empty
+        if [[ -z "$PRIVATE_KEY" ]]; then
+          echo "ERROR: PRIVATE_KEY is empty!"
+          exit 1
+        fi
 
-      - name: Deploy to EC2
-        run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@your-ec2-ip <<EOF
-          set -e  # Exit immediately if a command fails
+        # Setup SSH Key
+        mkdir -p ~/.ssh
+        echo "$PRIVATE_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
+
+        # Debugging: Check SSH Connection
+        ssh -o StrictHostKeyChecking=no $USER@$HOST "echo Connected to EC2"
+
+        # Deploy changes
+        ssh -o StrictHostKeyChecking=no $USER@$HOST << 'EOF'
+          set -e  # Exit on error
           cd /var/www/html/
 
-          # Ensure Git is installed
+          # Ensure Git is Installed
           which git || sudo apt-get install -y git
-
-          # Add GitHub as a known host
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
 
           # Pull latest changes
           sudo git pull origin main
 
-          # Fix ownership and restart Apache
+          # Fix permissions and restart Apache
           sudo chown -R www-data:www-data /var/www/html/
           sudo systemctl restart apache2
-          EOF
+        EOF
