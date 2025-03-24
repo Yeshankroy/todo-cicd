@@ -20,11 +20,6 @@ jobs:
         USER: ubuntu
 
       run: |
-        # Debugging: Print if PRIVATE_KEY is empty
-        if [[ -z "$PRIVATE_KEY" ]]; then
-          echo "ERROR: PRIVATE_KEY is empty!"
-          exit 1
-        fi
 
         # Setup SSH Key
         mkdir -p ~/.ssh
