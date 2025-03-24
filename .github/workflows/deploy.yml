@@ -25,22 +25,30 @@ jobs:
           echo "ERROR: PRIVATE_KEY is empty!"
           exit 1
         fi
+
         # Setup SSH Key
         mkdir -p ~/.ssh
         echo "$PRIVATE_KEY" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
+
         # Debugging: Check SSH Connection
         ssh -o StrictHostKeyChecking=no $USER@$HOST "echo Connected to EC2"
+
         # Deploy changes
         ssh -o StrictHostKeyChecking=no $USER@$HOST << 'EOF'
-          set -e  # Exit on error
+          set -e  # Stop script if any command fails
           cd /var/www/html/
-          # Ensure Git is Installed
+
+          # Ensure Git is installed
           which git || sudo apt-get install -y git
-          # Pull latest changes
-          sudo git pull origin main
-          # Fix permissions and restart Apache
+
+          # Set Git configuration to automatically resolve conflicts
+          git config pull.rebase false
+          git fetch --all
+          git reset --hard origin/main  # Force reset to match GitHub version
+
+          # Set correct permissions and restart Apache
           sudo chown -R www-data:www-data /var/www/html/
           sudo systemctl restart apache2
         EOF
