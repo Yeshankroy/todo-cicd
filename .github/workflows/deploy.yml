@@ -44,6 +44,10 @@ jobs:
           # Ensure Git is installed
           which git || sudo apt-get install -y git
 
+          # Fix ownership and permissions before pulling code
+          sudo chown -R ubuntu:ubuntu /var/www/html/
+          sudo chmod -R 775 /var/www/html/
+
           # Set /var/www/html as a safe Git directory
           git config --global --add safe.directory /var/www/html
 
@@ -59,7 +63,10 @@ jobs:
             git reset --hard origin/main
           fi
 
-          # Set correct permissions and restart Apache
+          # Set correct permissions for Apache
           sudo chown -R www-data:www-data /var/www/html/
+          sudo chmod -R 755 /var/www/html/
+
+          # Restart Apache
           sudo systemctl restart apache2
         EOF
