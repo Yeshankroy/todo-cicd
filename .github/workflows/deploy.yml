@@ -19,29 +19,27 @@ jobs:
         HOST: ${{ secrets.EC2_HOST }}  # Store EC2 public IP as a GitHub Secret
         USER: ubuntu
 
-    - name: Deploy to EC2
       run: |
-        ssh -o StrictHostKeyChecking=no $USER@$HOST << 'EOF'
-        cd /var/www/html/
-        git config --global credential.helper store
-        git pull https://x-access-token:${{ secrets.GITHUB_DEPLOY_KEY }}@github.com/YOUR_USERNAME/YOUR_REPO.git main
-        sudo chown -R www-data:www-data /var/www/html/
-        sudo systemctl restart apache2
-        EOF
+        # Debugging: Print if PRIVATE_KEY is empty
+        if [[ -z "$PRIVATE_KEY" ]]; then
+          echo "ERROR: PRIVATE_KEY is empty!"
+          exit 1
+        fi
+        # Setup SSH Key
+        mkdir -p ~/.ssh
+        echo "$PRIVATE_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
         # Debugging: Check SSH Connection
         ssh -o StrictHostKeyChecking=no $USER@$HOST "echo Connected to EC2"
-
         # Deploy changes
         ssh -o StrictHostKeyChecking=no $USER@$HOST << 'EOF'
           set -e  # Exit on error
           cd /var/www/html/
-
           # Ensure Git is Installed
           which git || sudo apt-get install -y git
-
           # Pull latest changes
           sudo git pull origin main
-
           # Fix permissions and restart Apache
           sudo chown -R www-data:www-data /var/www/html/
           sudo systemctl restart apache2
