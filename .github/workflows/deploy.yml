@@ -19,14 +19,15 @@ jobs:
         HOST: ${{ secrets.EC2_HOST }}  # Store EC2 public IP as a GitHub Secret
         USER: ubuntu
 
+    - name: Deploy to EC2
       run: |
-
-        # Setup SSH Key
-        mkdir -p ~/.ssh
-        echo "$PRIVATE_KEY" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
-
+        ssh -o StrictHostKeyChecking=no $USER@$HOST << 'EOF'
+        cd /var/www/html/
+        git config --global credential.helper store
+        git pull https://x-access-token:${{ secrets.GITHUB_DEPLOY_KEY }}@github.com/YOUR_USERNAME/YOUR_REPO.git main
+        sudo chown -R www-data:www-data /var/www/html/
+        sudo systemctl restart apache2
+        EOF
         # Debugging: Check SSH Connection
         ssh -o StrictHostKeyChecking=no $USER@$HOST "echo Connected to EC2"
 
