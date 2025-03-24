@@ -28,11 +28,22 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh -o StrictHostKeyChecking=no ubuntu@your-ec2-ip "echo Connected successfully"
 
+      - name: Deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@your-ec2-ip << 'EOF'
+            set -e  # Exit on error
+            cd /var/www/html/
 
-        # Deploy changes
-        ssh -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST << 'EOF'
-          cd /var/www/html/
-          sudo git pull origin main
-          sudo chown -R www-data:www-data /var/www/html/
-          sudo systemctl restart apache2
-        EOF
+            # Ensure Git is installed
+            which git || sudo apt-get install -y git
+
+            # Add GitHub as a known host
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+            # Pull latest changes
+            sudo git pull https://github.com/YOUR_USERNAME/YOUR_REPO.git main
+
+            # Fix ownership and restart Apache
+            sudo chown -R www-data:www-data /var/www/html/
+            sudo systemctl restart apache2
+          EOF
