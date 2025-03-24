@@ -44,6 +44,9 @@ jobs:
           # Ensure Git is installed
           which git || sudo apt-get install -y git
 
+          # Set /var/www/html as a safe Git directory
+          git config --global --add safe.directory /var/www/html
+
           # Check if this is a Git repository
           if [ ! -d ".git" ]; then
             echo "Git repository not found! Cloning..."
